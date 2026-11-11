@@ -8,6 +8,18 @@ Supported types: ``int``, ``float``, ``str``, ``bool``, ``None``,
 Non-finite floats (NaN / Infinity) and circular references raise
 ``ValueError``; unsupported objects and non-string dict keys raise
 ``TypeError``.
+
+The writer recurses, so structures nested deeper than roughly 300 levels
+raise ``RecursionError`` on CPython's default recursion limit (documented
+difference from the stdlib, whose C encoder digs deeper; the project
+requires and tests 100 levels).
+
+Unlike ``json.dumps``, non-string dict keys are *not* coerced to strings
+and floats that are not finite are *not* emitted as ``NaN``/``Infinity``
+-- both are refused, because RFC 8259 has no representation for them.
+Float formatting itself is identical to the stdlib: ``float.__repr__``,
+the shortest decimal string that round-trips, so there is no rounding
+difference.
 """
 
 __all__ = ["dumps"]

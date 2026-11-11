@@ -16,6 +16,14 @@ Public API
 Supported values: object, array, string (with all RFC 8259 escapes,
 including ``\\uXXXX`` surrogate pairs), number (int and float, with
 optional fraction and exponent), ``true``, ``false`` and ``null``.
+
+The scanner is a recursive-descent parser, so each nesting level consumes
+Python stack frames: documents nested deeper than roughly 300 levels raise
+``RecursionError`` on CPython's default recursion limit of 1000 (the
+pure-Python fallback scanner of the standard library behaves the same way;
+the stdlib's C accelerator digs deeper).  This is a documented difference
+from the stdlib, asserted nowhere on purpose -- the project requires and
+tests 100 levels, which parse fine.
 """
 
 __all__ = ["JSONParseError", "loads", "load"]
